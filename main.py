@@ -6,6 +6,23 @@ timer = None
 BACKGROUND_COLOR = '#884A39'
 
 
+def show_custom_message(title, message):
+    # Create a top-level window
+    dialog = Toplevel(window)
+    dialog.title(title)
+    dialog.transient()
+
+    # Create a label with the message
+    label = Label(dialog, text=message, font=("Montserrat", 20, "bold"))
+    label.pack(padx=20, pady=20)
+
+    # This window closes when user hits Escape key
+    dialog.bind('<Escape>', lambda e, w=dialog: w.destroy())
+
+    # Run the dialog window
+    dialog.mainloop()
+
+
 def start_timer():
     countdown = 59
     new_timer(countdown)
@@ -21,16 +38,14 @@ def new_timer(count):
         global timer
         timer = window.after(1000, new_timer, count - 1)
     else:
+        goal = True
         high_score = ((50 - len(random_words)) / 50) * 60
-        again = messagebox.askyesno(title="You lose!",
-                                    message=f"Your WPM Score is {high_score}\n\n\n"
-                                            f"* WPM - Words Per Minute\n\n"
-                                            f"Do you want to play again?")
-        if again:
-            print('Yes')
-        else:
-            window.after(10000)
-            window.destroy()
+        text.delete(1.0, END)
+        if goal:
+            show_custom_message("Game Over", f"Your WPM Score is {high_score}\nThat is {high_score} words per minute.\n"
+                                             f"* WPM - Words Per Minute\n")
+        window.after(10000)
+        window.destroy()
 
 
 def werewolf():
@@ -76,7 +91,7 @@ heading_label = Label(text="Press the Space Bar after each word. At the end, you
 heading_label.config(pady=20, padx=0, bg=BACKGROUND_COLOR, fg='#F9E0BB')
 heading_label.grid(column=0, row=3)
 
-text = Text(height=10, width=40, font=("Montserrat", 20), wrap="word")
+text = Text(height=10, width=40, font=("Montserrat", 20), wrap="word", pady=20, padx=40)
 random_words = words.random_words
 for word in random_words:
     text.insert(END, word + '   ')
